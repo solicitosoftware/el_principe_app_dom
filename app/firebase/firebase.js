@@ -1,15 +1,15 @@
-import app from 'firebase/app';
-import 'firebase/firestore';
-import 'firebase/storage';
-import 'firebase/auth';
-import FirebaseConfig from './serviceAccountKeyQA';
+import app from "firebase/app";
+import "firebase/firestore";
+import "firebase/storage";
+import "firebase/auth";
+import FirebaseConfig from "./serviceAccountKey";
 
 //Constructor de metodos de firebase a utilizar
 class Firebase {
   constructor() {
     if (!app.apps.length) {
       app.initializeApp(FirebaseConfig);
-      app.firestore().settings({experimentalForceLongPolling: true});
+      app.firestore().settings({ experimentalForceLongPolling: true });
     }
     this.db = app.firestore();
     this.storage = app.storage();

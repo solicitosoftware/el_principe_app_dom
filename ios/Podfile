@@ -8,7 +8,7 @@ target 'el_principe_app_domi' do
 
   use_react_native!(:path => config["reactNativePath"])
 
-  target 'el_principe_appTests' do
+  target 'el_principe_app_domiTests' do
     inherit! :complete
     # Pods for testing
   end
