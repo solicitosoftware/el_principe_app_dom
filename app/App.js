@@ -18,10 +18,10 @@ const Stack = createStackNavigator();
 //Logo den banner superior
 function Logo() {
   return (
-    <View style={{ marginLeft: normalize(20), marginTop: normalize(5) }}>
+    <View style={{ marginLeft: normalize(20), paddingBottom: normalize(15) }}>
       <Image
         source={require("./assets/LogoPrincipe2.png")}
-        style={{ width: normalize(180), height: normalize(40, "height") }}
+        style={{ width: normalize(160), height: normalize(38, "height") }}
         resizeMode="stretch"
       />
     </View>

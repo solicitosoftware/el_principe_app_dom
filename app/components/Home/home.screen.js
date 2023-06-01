@@ -40,6 +40,7 @@ import {
 import { initialLogin } from "../../redux/reducers/loginReducer";
 import { diffMinutos } from "../utils";
 import { ScrollView } from "react-native-gesture-handler";
+import DeviceInfo from "react-native-device-info";
 
 function Home({ route }) {
   const { firebase } = useContext(FirebaseContext);
@@ -269,10 +270,24 @@ function Home({ route }) {
       <>
         <View
           style={{
+            marginTop: normalize(DeviceInfo.hasNotch() ? 35 : 0),
             paddingVertical: normalize(15, "height"),
             borderBottomWidth: 0.5,
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "center",
           }}
         >
+          {DeviceInfo.getSystemName() === "iOS" && (
+            <View style={{ position: "absolute", left: normalize(10) }}>
+              <Icon
+                size={normalize(33)}
+                name="chevron-left"
+                type="evilicon"
+                onPress={() => setModalDetalle(false)}
+              />
+            </View>
+          )}
           <Text style={styles.turno}>Domicilio Turno #{turnoDomicilio}</Text>
         </View>
         <ScrollView>
@@ -629,28 +644,6 @@ function Home({ route }) {
     );
   };
 
-  //Metodo para actualizar el pedido al confirmar la entrega
-  const actualizarPedido = async (id) => {
-    try {
-      const response = await api.put(
-        `pedidos/api/updatePedidoDomiciliario/${id}`,
-        {
-          estado: "Entregado",
-        }
-      );
-    } catch (error) {
-      toastRef.current.show("Valide su conexión a internet", 3000);
-      firebase.db.collection("logs").add({
-        accion: "Entregar Pedido App",
-        fecha: firebase.time,
-        error: error.message,
-        datos: { id },
-      });
-    } finally {
-      setModalDetalle(false);
-    }
-  };
-
   return (
     <>
       <Text style={styles.title}>{domiciliario.nombre}</Text>
@@ -792,9 +785,9 @@ const styles = StyleSheet.create({
   },
   button: {
     paddingVertical: normalize(5, "height"),
-    marginVertical: normalize(2, "height"),
   },
   totalDetalle: {
+    minHeight: normalize(40, "height"),
     justifyContent: "space-between",
     flexDirection: "row",
     backgroundColor: Colors.primary,
