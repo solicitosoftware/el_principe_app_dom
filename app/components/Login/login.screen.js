@@ -225,7 +225,7 @@ function Login() {
                 }}
                 mode="contained"
               >
-                Login
+                Ingresar
               </Button>
             </TouchableNativeFeedback>
           )}

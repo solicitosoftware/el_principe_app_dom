@@ -7,6 +7,8 @@ const Colors = {
   button: "#DC291A",
   error: "#B6301B",
   success: "#2ECC71",
+  cancelado: "#E74C3C",
+  despachado: "#2980B9",
 };
 
 export default Colors;

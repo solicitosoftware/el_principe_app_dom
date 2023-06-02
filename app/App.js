@@ -12,16 +12,22 @@ import Home from "./components/Home/home.screen";
 import { Provider, useDispatch } from "react-redux";
 import store from "./redux/store";
 import { logout } from "./redux/reducers/usuariosReducer";
+import DeviceInfo from "react-native-device-info";
 
 const Stack = createStackNavigator();
 
 //Logo den banner superior
 function Logo() {
   return (
-    <View style={{ marginLeft: normalize(20), paddingBottom: normalize(15) }}>
+    <View
+      style={{
+        marginLeft: normalize(20),
+        paddingBottom: normalize(DeviceInfo.getSystemName() === "iOS" ? 15 : 5),
+      }}
+    >
       <Image
         source={require("./assets/LogoPrincipe2.png")}
-        style={{ width: normalize(160), height: normalize(38, "height") }}
+        style={{ width: normalize(155), height: normalize(38, "height") }}
         resizeMode="stretch"
       />
     </View>

@@ -292,14 +292,7 @@ function Home({ route }) {
         </View>
         <ScrollView>
           <View style={{ marginVertical: normalize(15, "height") }}>
-            <View
-              style={{
-                flexDirection: "row",
-                justifyContent: "space-between",
-                marginHorizontal: normalize(20),
-                marginBottom: normalize(10, "height"),
-              }}
-            >
+            <View style={styles.fechas}>
               <Text style={{ fontSize: normalize(18) }}>
                 <Text style={{ fontWeight: "bold" }}>Fecha: </Text>
                 {fecha && moment(fecha.toDate()).format("DD-MM-YYYY")}
@@ -316,14 +309,7 @@ function Home({ route }) {
                 </Text>
               )}
             </View>
-            <View
-              style={{
-                flexDirection: "row",
-                justifyContent: "space-between",
-                marginHorizontal: normalize(20),
-                marginBottom: normalize(10, "height"),
-              }}
-            >
+            <View style={styles.fechas}>
               {domiciliario?.hora && (
                 <Text style={{ fontSize: normalize(18) }}>
                   <Text style={{ fontWeight: "bold" }}>Despacho: </Text>
@@ -660,7 +646,7 @@ function Home({ route }) {
       </View>
       <Text style={styles.title}>{"Estado de Cuenta".toUpperCase()}</Text>
       <View style={styles.estadoCuenta}>
-        <View style={styles.abonado}>
+        <View style={styles.despachados}>
           <Text
             style={styles.textEstado}
             numberOfLines={1}
@@ -678,7 +664,7 @@ function Home({ route }) {
             Cancelados: {estadoPedidos.cancelado}
           </Text>
         </View>
-        <View style={styles.total}>
+        <View style={styles.entregados}>
           <Text
             style={styles.textEstado}
             numberOfLines={1}
@@ -724,18 +710,18 @@ const styles = StyleSheet.create({
     marginHorizontal: 5,
   },
   despachado: {
-    backgroundColor: "#2980B9",
+    backgroundColor: Colors.despachado,
   },
   entregado: {
     backgroundColor: Colors.success,
   },
   cancelado: {
-    backgroundColor: "#E74C3C",
+    backgroundColor: Colors.cancelado,
   },
   estadoCuenta: {
     flex: 1,
     flexDirection: "row",
-    maxHeight: normalize(20, "height"),
+    maxHeight: normalize(25, "height"),
     alignItems: "center",
   },
   title: {
@@ -750,29 +736,33 @@ const styles = StyleSheet.create({
     fontSize: normalize(15),
     color: "white",
   },
-  abonado: {
+  despachados: {
     flex: 1,
     alignItems: "center",
-    backgroundColor: "#2980B9",
+    backgroundColor: Colors.despachado,
     justifyContent: "center",
+    paddingVertical: normalize(3),
   },
   deuda: {
     flex: 1,
     alignItems: "center",
     backgroundColor: Colors.primary,
     justifyContent: "center",
+    paddingVertical: normalize(3),
   },
   cancelados: {
     flex: 1,
     alignItems: "center",
-    backgroundColor: "#E74C3C",
+    backgroundColor: Colors.cancelado,
     justifyContent: "center",
+    paddingVertical: normalize(3),
   },
-  total: {
+  entregados: {
     flex: 1,
     alignItems: "center",
-    backgroundColor: "#2ECC71",
+    backgroundColor: Colors.success,
     justifyContent: "center",
+    paddingBottom: normalize(3),
   },
   turno: {
     textAlign: "center",
@@ -796,6 +786,12 @@ const styles = StyleSheet.create({
   },
   toast: {
     backgroundColor: Colors.error,
+  },
+  fechas: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginHorizontal: normalize(20),
+    marginBottom: normalize(10, "height"),
   },
 });
 
