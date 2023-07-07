@@ -11,7 +11,7 @@ import Login from "./components/Login/login.screen";
 import Home from "./components/Home/home.screen";
 import { Provider, useDispatch } from "react-redux";
 import store from "./redux/store";
-import { logout } from "./redux/reducers/usuariosReducer";
+import { logout } from "./redux/reducers/loginReducer";
 import DeviceInfo from "react-native-device-info";
 
 const Stack = createStackNavigator();
@@ -22,7 +22,9 @@ function Logo() {
     <View
       style={{
         marginLeft: normalize(20),
-        paddingBottom: normalize(DeviceInfo.getSystemName() === "iOS" ? 15 : 5),
+        paddingBottom: normalize(
+          DeviceInfo.getSystemName().includes("OS") ? 15 : 5
+        ),
       }}
     >
       <Image

@@ -18,6 +18,7 @@ import {
   BackHandler,
   Dimensions,
   Alert,
+  Platform,
 } from "react-native";
 import { useBackHandler } from "@react-native-community/hooks";
 import { Button, List, Avatar, ActivityIndicator } from "react-native-paper";
@@ -25,7 +26,7 @@ import { Icon } from "react-native-elements";
 import { formatoPrecio } from "../../utils";
 import normalize from "react-native-normalize";
 import Toast, { DURATION } from "react-native-easy-toast";
-import { checkVersion } from "react-native-check-version";
+import checkVersion from "react-native-store-version";
 import moment from "moment";
 import "moment/locale/es";
 import {
@@ -41,6 +42,8 @@ import { initialLogin } from "../../redux/reducers/loginReducer";
 import { diffMinutos } from "../utils";
 import { ScrollView } from "react-native-gesture-handler";
 import DeviceInfo from "react-native-device-info";
+import SplashScreen from "react-native-splash-screen";
+import { REACT_APP_IOS_LINK, REACT_APP_ANDROID_LINK } from "@env";
 
 function Home({ route }) {
   const { firebase } = useContext(FirebaseContext);
@@ -84,10 +87,14 @@ function Home({ route }) {
   });
 
   const validarVersion = async () => {
-    const version = await checkVersion();
+    const check = await checkVersion({
+      version: DeviceInfo.getVersion(),
+      iosStoreURL: REACT_APP_IOS_LINK,
+      androidStoreURL: REACT_APP_ANDROID_LINK,
+      country: "co",
+    });
 
-    const actualizarApp = () => {
-      let link = version.url;
+    const actualizarApp = (link) => {
       Linking.openURL(link)
         .then((supported) => {
           if (!supported) {
@@ -101,14 +108,19 @@ function Home({ route }) {
         .catch((err) => console.error(err));
     };
 
-    if (version.needsUpdate) {
+    if (check.result === "new") {
       Alert.alert(
         "Actualización",
-        `Es necesario actualizar la aplicación en su última versión ${version.version}`,
+        `Es necesario actualizar la aplicación en su última versión ${check.remote}`,
         [
           {
             text: "Ir",
-            onPress: () => actualizarApp(),
+            onPress: () =>
+              actualizarApp(
+                Platform.OS === "ios"
+                  ? REACT_APP_IOS_LINK
+                  : REACT_APP_ANDROID_LINK
+              ),
           },
         ]
       );
@@ -119,9 +131,9 @@ function Home({ route }) {
 
   const obtenerUsuario = useCallback(() => {
     if (Object.values(domiciliario).length === 0) {
-      dispatch(obtenerUsuarioAsync(login.id));
+      dispatch(obtenerUsuarioAsync(login.uid));
     }
-  }, [dispatch, domiciliario, route]);
+  }, [dispatch, domiciliario]);
 
   const obtenerPedidos = () => {
     const startOfToday = moment(date).startOf("day").toDate();
@@ -130,7 +142,7 @@ function Home({ route }) {
       .collection("pedidos")
       .where("fecha", ">=", startOfToday)
       .where("fecha", "<=", endOfToday)
-      .where("domiciliario.id", "==", login.id)
+      .where("domiciliario.id", "==", login.uid)
       .onSnapshot(manejarSnapshotPedidos);
   };
 
@@ -159,7 +171,7 @@ function Home({ route }) {
       .collection("pedidos")
       .where("deuda", "==", true)
       .where("medioPago", "in", ["efectivo", "parcial"])
-      .where("domiciliario.id", "==", login.id)
+      .where("domiciliario.id", "==", login.uid)
       .onSnapshot(manejarSnapshotDeudas);
   };
 
@@ -186,6 +198,7 @@ function Home({ route }) {
   useEffect(() => {
     obtenerUsuario();
     validarVersion();
+    SplashScreen.hide();
   }, []);
 
   useEffect(() => {
@@ -278,7 +291,7 @@ function Home({ route }) {
             justifyContent: "center",
           }}
         >
-          {DeviceInfo.getSystemName() === "iOS" && (
+          {DeviceInfo.getSystemName().includes("OS") && (
             <View style={{ position: "absolute", left: normalize(10) }}>
               <Icon
                 size={normalize(33)}

@@ -138,8 +138,8 @@ android {
         applicationId "com.el_principe_app_domi"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 106
-        versionName "1.0.6"
+        versionCode 107
+        versionName "1.0.7"
     }
     signingConfigs {
         release {

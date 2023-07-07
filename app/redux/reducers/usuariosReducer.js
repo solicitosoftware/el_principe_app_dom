@@ -21,21 +21,6 @@ const api = axios.create({
   baseURL: RUTA_FUNCTIONS,
 });
 
-export const loginUsuarioAsync = createAsyncThunk(
-  "usuarios/login",
-  async (data) => {
-    const response = await axios.post(
-      `https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${REACT_APP_FIREBASE_KEY}`,
-      {
-        email: data.correo,
-        password: data.password,
-        returnSecureToken: true,
-      }
-    );
-    return response.data;
-  }
-);
-
 export const obtenerUsuarioAsync = createAsyncThunk(
   "usuarios/obtener",
   async (data) => {
@@ -47,30 +32,9 @@ export const obtenerUsuarioAsync = createAsyncThunk(
 export const usuariosReducer = createSlice({
   name: "usuarios",
   initialState,
-  reducers: {
-    logout: () => {},
-  },
+  reducers: {},
   extraReducers: (builder) => {
     builder
-      .addCase(loginUsuarioAsync.pending, (state) => {
-        state.estado = {
-          isLoading: true,
-          ...state.estado,
-        };
-      })
-      .addCase(loginUsuarioAsync.fulfilled, (state, action) => {
-        state.estado = {
-          isLoading: false,
-          ...state.estado,
-        };
-      })
-      .addCase(loginUsuarioAsync.rejected, (state, action) => {
-        state.estado = {
-          isLoading: false,
-          ...state.estado,
-        };
-      })
-
       .addCase(obtenerUsuarioAsync.pending, (state) => {
         state.estado = {
           isLoading: true,
@@ -95,8 +59,6 @@ export const usuariosReducer = createSlice({
       });
   },
 });
-
-export const { logout } = usuariosReducer.actions;
 
 export const initialUsuarios = (state) => state.usuarios.value;
 export const estadoProceso = (state) => state.usuarios.estado;

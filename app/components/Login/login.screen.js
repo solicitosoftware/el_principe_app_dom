@@ -21,11 +21,15 @@ import { Image, Icon } from "react-native-elements";
 import normalize from "react-native-normalize";
 import {
   estadoProceso,
-  loginUsuarioAsync,
   obtenerUsuarioAsync,
 } from "../../redux/reducers/usuariosReducer";
 import { useDispatch, useSelector } from "react-redux";
-import { initialLogin, setLogin } from "../../redux/reducers/loginReducer";
+import {
+  initialLogin,
+  logout,
+  setLogin,
+} from "../../redux/reducers/loginReducer";
+import auth from "@react-native-firebase/auth";
 
 function Login() {
   const dispatch = useDispatch();
@@ -60,19 +64,33 @@ function Login() {
   useEffect(() => {
     const handleAppStateChange = (nextAppState) => {
       if (nextAppState === "active") {
-        if (login.token) {
+        if (login.uid) {
           navigation.navigate("home");
+        } else {
+          SplashScreen.hide();
         }
       }
     };
 
     AppState.addEventListener("change", handleAppStateChange);
-    SplashScreen.hide();
 
     return () => {
       AppState.removeEventListener("change", handleAppStateChange);
     };
   }, [login]);
+
+  const onAuthStateChanged = async (user) => {
+    if (user) {
+      dispatch(setLogin(user._user));
+    } else {
+      dispatch(logout());
+    }
+  };
+
+  useEffect(() => {
+    const subscriber = auth().onAuthStateChanged(onAuthStateChanged);
+    return subscriber;
+  }, []);
 
   const permiso = (data) => {
     const { estado, rol } = data;
@@ -83,20 +101,15 @@ function Login() {
   //Metodo submit para el formulario del formik
   const handleSubmit = async () => {
     try {
-      const result = await dispatch(loginUsuarioAsync(formik.values)).unwrap();
-      if (result) {
+      const { user } = await auth().signInWithEmailAndPassword(
+        formik.values.correo,
+        formik.values.password
+      );
+      if (user) {
         const domiciliario = await dispatch(
-          obtenerUsuarioAsync(result.localId)
+          obtenerUsuarioAsync(user._user.uid)
         ).unwrap();
         if (permiso(domiciliario)) {
-          dispatch(
-            setLogin({
-              id: result.localId,
-              token: result.idToken,
-              rol: domiciliario.rol,
-              sede: domiciliario.sede,
-            })
-          );
           navigation.navigate("home");
         } else {
           toastRef.current.show(
